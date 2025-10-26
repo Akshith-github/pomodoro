@@ -8,6 +8,13 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to add task screen
+          Navigator.pushNamed(context, '/addTask');
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Center(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,

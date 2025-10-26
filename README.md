@@ -24,7 +24,21 @@ Three main pages of the application are as follows:
 Note: In VS Code, use Pubspec Assist extension to easily add/remove dependencies in pubspec.yaml file.
 The project uses the following dependencies (pub.dev packages):
 
-- flex_color_scheme
+- flex_color_scheme for theming
+- riverpod for state management (https://riverpod.dev/docs/introduction/getting_started#installing-the-package)
+
+    1) flutter pub add hooks_riverpod
+    2) flutter pub add flutter_hooks
+    3) flutter pub add dev:custom_lint
+    4) flutter pub add dev:riverpod_lint
+
+- drift for local database (https://drift.simonbinder.eu/docs/getting-started/)
+    - dart pub add drift drift_flutter path_provider dev:drift_dev dev:build_runner
+    1) flutter pub add drift
+    2) flutter pub add drift_flutter
+    3) flutter pub add path_provider
+    4) flutter pub add dev:drift_dev
+    5) flutter pub add dev:build_runner
 
 ## Commands 
 
@@ -50,6 +64,12 @@ flutter pub get
 flutter doctor command to check for any issues
 ```bash
 flutter doctor
+```
+
+To generate the database code using drift:
+
+```bash
+dart run build_runner watch
 ```
 
 
