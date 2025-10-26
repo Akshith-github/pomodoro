@@ -16,15 +16,17 @@ class TaskRepository {
     return await _database.getAllTasks();
   }
 
-  Future<int> createTask(Task task) async {
+  Future<Task> getTaskById(int id) async {
+    return await _database.getTaskById(id);
+  }
+
+  Future<int> createTask(String title, int pomodoroCount) async {
     return await _database.createTask(
       TasksCompanion.insert(
-        title: task.title,
-        createdAt: Value(task.createdAt),
-        updatedAt: Value(task.updatedAt),
-        deletedAt: Value(task.deletedAt),
-        isDone: Value(task.isDone),
-        pomodoroCount: Value(task.pomodoroCount),
+        title: title,
+        createdAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+        pomodoroCount: Value(pomodoroCount),
       ),
     );
   }
@@ -33,5 +35,18 @@ class TaskRepository {
     final query = _database.select(_database.tasks);
     query.where((tbl) => tbl.createdAt.isBetweenValues(start, end));
     return query.watch();
+  }
+
+  Future<void> completePomodoro(int taskId) async {
+    final task = await getTaskById(taskId);
+    await _database.updateTask(
+      task
+          .toCompanion(true)
+          .copyWith(
+            completedPomodoros: Value(task.completedPomodoros + 1),
+            updatedAt: Value(DateTime.now()),
+            isDone: Value(task.completedPomodoros >= task.pomodoroCount),
+          ),
+    );
   }
 }

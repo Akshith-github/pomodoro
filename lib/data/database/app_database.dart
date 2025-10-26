@@ -20,6 +20,8 @@ class Tasks extends Table {
   DateTimeColumn get deletedAt => dateTime().nullable()();
   BoolColumn get isDone => boolean().withDefault(const Constant(false))();
   IntColumn get pomodoroCount => integer().withDefault(const Constant(0))();
+  IntColumn get completedPomodoros =>
+      integer().withDefault(const Constant(0))();
 }
 
 @DriftDatabase(tables: [Tasks])
@@ -31,6 +33,12 @@ class AppDatabase extends _$AppDatabase {
 
   Future<List<Task>> getAllTasks() => select(tasks).get();
   Future<int> createTask(TasksCompanion task) => into(tasks).insert(task);
+
+  Future<Task> getTaskById(int id) async {
+    return await (select(tasks)..where((tbl) => tbl.id.equals(id))).getSingle();
+  }
+
+  Future<void> updateTask(TasksCompanion task) => update(tasks).replace(task);
 }
 
 LazyDatabase _openConnection() {

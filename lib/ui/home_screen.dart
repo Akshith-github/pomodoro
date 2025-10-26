@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pomodoro/ui/components/task_list.dart';
 import 'package:pomodoro/ui/components/today_summary.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -18,9 +19,11 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Padding(padding: EdgeInsets.all(16.0), child: TodaySummary()),
-            Text('Welcome to the Pomodoro App!'),
+          children: [
+            const Padding(padding: EdgeInsets.all(16.0), child: TodaySummary()),
+            const Text('Welcome to the Pomodoro App!'),
+            const SizedBox(height: 20),
+            const Expanded(child: TaskList()),
           ],
         ),
       ),

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:pomodoro/providers/today_tasks_provider.dart';
 
-class TodaySummary extends StatelessWidget {
+class TodaySummary extends ConsumerWidget {
   const TodaySummary({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final todaySummary = ref.watch(todaySummaryProvider);
+    final totalTasks = todaySummary.value?.$1 ?? 0;
+    final completedTasks = todaySummary.value?.$2 ?? 0;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
@@ -29,8 +34,12 @@ class TodaySummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Text(
-            'Today Summary',
+          Text(
+            'Today Summary ',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'Total $totalTasks tasks, $completedTasks completed',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],

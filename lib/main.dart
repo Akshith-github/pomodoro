@@ -1,10 +1,13 @@
+import 'dart:developer';
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pomodoro/ui/home_screen.dart';
 import 'package:pomodoro/ui/screens/add_task_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
       darkTheme: FlexThemeData.dark(scheme: FlexScheme.mandyRed),
       themeMode: ThemeMode.system,
       home: const HomeScreen(),
-      routes: {'/addTask': (context) => const AddTaskScreen()},
+      routes: {'/addTask': (context) => AddTaskScreen()},
     );
   }
 }

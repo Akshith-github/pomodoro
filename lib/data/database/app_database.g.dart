@@ -90,6 +90,17 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _completedPomodorosMeta =
+      const VerificationMeta('completedPomodoros');
+  @override
+  late final GeneratedColumn<int> completedPomodoros = GeneratedColumn<int>(
+    'completed_pomodoros',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -99,6 +110,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
     deletedAt,
     isDone,
     pomodoroCount,
+    completedPomodoros,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -156,6 +168,15 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         ),
       );
     }
+    if (data.containsKey('completed_pomodoros')) {
+      context.handle(
+        _completedPomodorosMeta,
+        completedPomodoros.isAcceptableOrUnknown(
+          data['completed_pomodoros']!,
+          _completedPomodorosMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -193,6 +214,10 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
         DriftSqlType.int,
         data['${effectivePrefix}pomodoro_count'],
       )!,
+      completedPomodoros: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_pomodoros'],
+      )!,
     );
   }
 
@@ -210,6 +235,7 @@ class Task extends DataClass implements Insertable<Task> {
   final DateTime? deletedAt;
   final bool isDone;
   final int pomodoroCount;
+  final int completedPomodoros;
   const Task({
     required this.id,
     required this.title,
@@ -218,6 +244,7 @@ class Task extends DataClass implements Insertable<Task> {
     this.deletedAt,
     required this.isDone,
     required this.pomodoroCount,
+    required this.completedPomodoros,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -231,6 +258,7 @@ class Task extends DataClass implements Insertable<Task> {
     }
     map['is_done'] = Variable<bool>(isDone);
     map['pomodoro_count'] = Variable<int>(pomodoroCount);
+    map['completed_pomodoros'] = Variable<int>(completedPomodoros);
     return map;
   }
 
@@ -245,6 +273,7 @@ class Task extends DataClass implements Insertable<Task> {
           : Value(deletedAt),
       isDone: Value(isDone),
       pomodoroCount: Value(pomodoroCount),
+      completedPomodoros: Value(completedPomodoros),
     );
   }
 
@@ -261,6 +290,7 @@ class Task extends DataClass implements Insertable<Task> {
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       isDone: serializer.fromJson<bool>(json['isDone']),
       pomodoroCount: serializer.fromJson<int>(json['pomodoroCount']),
+      completedPomodoros: serializer.fromJson<int>(json['completedPomodoros']),
     );
   }
   @override
@@ -274,6 +304,7 @@ class Task extends DataClass implements Insertable<Task> {
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'isDone': serializer.toJson<bool>(isDone),
       'pomodoroCount': serializer.toJson<int>(pomodoroCount),
+      'completedPomodoros': serializer.toJson<int>(completedPomodoros),
     };
   }
 
@@ -285,6 +316,7 @@ class Task extends DataClass implements Insertable<Task> {
     Value<DateTime?> deletedAt = const Value.absent(),
     bool? isDone,
     int? pomodoroCount,
+    int? completedPomodoros,
   }) => Task(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -293,6 +325,7 @@ class Task extends DataClass implements Insertable<Task> {
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     isDone: isDone ?? this.isDone,
     pomodoroCount: pomodoroCount ?? this.pomodoroCount,
+    completedPomodoros: completedPomodoros ?? this.completedPomodoros,
   );
   Task copyWithCompanion(TasksCompanion data) {
     return Task(
@@ -305,6 +338,9 @@ class Task extends DataClass implements Insertable<Task> {
       pomodoroCount: data.pomodoroCount.present
           ? data.pomodoroCount.value
           : this.pomodoroCount,
+      completedPomodoros: data.completedPomodoros.present
+          ? data.completedPomodoros.value
+          : this.completedPomodoros,
     );
   }
 
@@ -317,7 +353,8 @@ class Task extends DataClass implements Insertable<Task> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('isDone: $isDone, ')
-          ..write('pomodoroCount: $pomodoroCount')
+          ..write('pomodoroCount: $pomodoroCount, ')
+          ..write('completedPomodoros: $completedPomodoros')
           ..write(')'))
         .toString();
   }
@@ -331,6 +368,7 @@ class Task extends DataClass implements Insertable<Task> {
     deletedAt,
     isDone,
     pomodoroCount,
+    completedPomodoros,
   );
   @override
   bool operator ==(Object other) =>
@@ -342,7 +380,8 @@ class Task extends DataClass implements Insertable<Task> {
           other.updatedAt == this.updatedAt &&
           other.deletedAt == this.deletedAt &&
           other.isDone == this.isDone &&
-          other.pomodoroCount == this.pomodoroCount);
+          other.pomodoroCount == this.pomodoroCount &&
+          other.completedPomodoros == this.completedPomodoros);
 }
 
 class TasksCompanion extends UpdateCompanion<Task> {
@@ -353,6 +392,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
   final Value<DateTime?> deletedAt;
   final Value<bool> isDone;
   final Value<int> pomodoroCount;
+  final Value<int> completedPomodoros;
   const TasksCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
@@ -361,6 +401,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.deletedAt = const Value.absent(),
     this.isDone = const Value.absent(),
     this.pomodoroCount = const Value.absent(),
+    this.completedPomodoros = const Value.absent(),
   });
   TasksCompanion.insert({
     this.id = const Value.absent(),
@@ -370,6 +411,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.deletedAt = const Value.absent(),
     this.isDone = const Value.absent(),
     this.pomodoroCount = const Value.absent(),
+    this.completedPomodoros = const Value.absent(),
   }) : title = Value(title);
   static Insertable<Task> custom({
     Expression<int>? id,
@@ -379,6 +421,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Expression<DateTime>? deletedAt,
     Expression<bool>? isDone,
     Expression<int>? pomodoroCount,
+    Expression<int>? completedPomodoros,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -388,6 +431,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (isDone != null) 'is_done': isDone,
       if (pomodoroCount != null) 'pomodoro_count': pomodoroCount,
+      if (completedPomodoros != null) 'completed_pomodoros': completedPomodoros,
     });
   }
 
@@ -399,6 +443,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     Value<DateTime?>? deletedAt,
     Value<bool>? isDone,
     Value<int>? pomodoroCount,
+    Value<int>? completedPomodoros,
   }) {
     return TasksCompanion(
       id: id ?? this.id,
@@ -408,6 +453,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
       deletedAt: deletedAt ?? this.deletedAt,
       isDone: isDone ?? this.isDone,
       pomodoroCount: pomodoroCount ?? this.pomodoroCount,
+      completedPomodoros: completedPomodoros ?? this.completedPomodoros,
     );
   }
 
@@ -435,6 +481,9 @@ class TasksCompanion extends UpdateCompanion<Task> {
     if (pomodoroCount.present) {
       map['pomodoro_count'] = Variable<int>(pomodoroCount.value);
     }
+    if (completedPomodoros.present) {
+      map['completed_pomodoros'] = Variable<int>(completedPomodoros.value);
+    }
     return map;
   }
 
@@ -447,7 +496,8 @@ class TasksCompanion extends UpdateCompanion<Task> {
           ..write('updatedAt: $updatedAt, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('isDone: $isDone, ')
-          ..write('pomodoroCount: $pomodoroCount')
+          ..write('pomodoroCount: $pomodoroCount, ')
+          ..write('completedPomodoros: $completedPomodoros')
           ..write(')'))
         .toString();
   }
@@ -473,6 +523,7 @@ typedef $$TasksTableCreateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<bool> isDone,
       Value<int> pomodoroCount,
+      Value<int> completedPomodoros,
     });
 typedef $$TasksTableUpdateCompanionBuilder =
     TasksCompanion Function({
@@ -483,6 +534,7 @@ typedef $$TasksTableUpdateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<bool> isDone,
       Value<int> pomodoroCount,
+      Value<int> completedPomodoros,
     });
 
 class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
@@ -525,6 +577,11 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
 
   ColumnFilters<int> get pomodoroCount => $composableBuilder(
     column: $table.pomodoroCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedPomodoros => $composableBuilder(
+    column: $table.completedPomodoros,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -572,6 +629,11 @@ class $$TasksTableOrderingComposer
     column: $table.pomodoroCount,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get completedPomodoros => $composableBuilder(
+    column: $table.completedPomodoros,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$TasksTableAnnotationComposer
@@ -603,6 +665,11 @@ class $$TasksTableAnnotationComposer
 
   GeneratedColumn<int> get pomodoroCount => $composableBuilder(
     column: $table.pomodoroCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get completedPomodoros => $composableBuilder(
+    column: $table.completedPomodoros,
     builder: (column) => column,
   );
 }
@@ -642,6 +709,7 @@ class $$TasksTableTableManager
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<bool> isDone = const Value.absent(),
                 Value<int> pomodoroCount = const Value.absent(),
+                Value<int> completedPomodoros = const Value.absent(),
               }) => TasksCompanion(
                 id: id,
                 title: title,
@@ -650,6 +718,7 @@ class $$TasksTableTableManager
                 deletedAt: deletedAt,
                 isDone: isDone,
                 pomodoroCount: pomodoroCount,
+                completedPomodoros: completedPomodoros,
               ),
           createCompanionCallback:
               ({
@@ -660,6 +729,7 @@ class $$TasksTableTableManager
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<bool> isDone = const Value.absent(),
                 Value<int> pomodoroCount = const Value.absent(),
+                Value<int> completedPomodoros = const Value.absent(),
               }) => TasksCompanion.insert(
                 id: id,
                 title: title,
@@ -668,6 +738,7 @@ class $$TasksTableTableManager
                 deletedAt: deletedAt,
                 isDone: isDone,
                 pomodoroCount: pomodoroCount,
+                completedPomodoros: completedPomodoros,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
